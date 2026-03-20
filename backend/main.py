@@ -1,13 +1,10 @@
 from fastapi import FastAPI
-from db import conectar_db
 from llamar_api import buscar_noticias
+from noticias_a_db import guardar_noticias
 
 
 
 app = FastAPI()
-
-
-
 
 
 @app.get("/listo")
@@ -15,13 +12,21 @@ def home():
     return {"status": "ok", "mensaje": "API funcionando 🚀"}
 
 
-@app.get("/buscar_noticias")
-def obtener_noticias():
-    query = "chile"
+@app.post("/obtener_noticias")
+def  obtener_noticias(query: str):
 
-    noticias = buscar_noticias(query)
+    if not query:
+        return {"error": "query vacío"}
 
+    lista_de_noticias = buscar_noticias(query)
+    guardar = guardar_noticias(lista_de_noticias)
 
     return {
-        "noticias":noticias
+        "mensaje":"noticias agregadas",
+        "cantidad": guardar
     }
+
+
+
+
+
